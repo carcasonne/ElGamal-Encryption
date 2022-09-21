@@ -11,7 +11,7 @@ def aliceEncryptsMessage(superSecretMessage):
     global PK_alice 
     
     SK_alice = random.randint(1, 9999) #random integer between 1 and 999 - 999 is just arbritary
-    PK_alice = pow(g, SK_alice) % p
+    PK_alice = generate(g, SK_alice)
     encryptedMessage = encrypt(superSecretMessage, PK_bob)
 
     return encryptedMessage
@@ -45,12 +45,15 @@ def encrypt(m, PK_reciever):
     r = random.randint(1, 9999) # if r gets bigger it starts taking a lot of time to run this
 
     c_1 = pow(g, r);
-    c_2 = ((pow(PK_reciever, r) % p) * m);
+    c_2 = (generate(PK_reciever, r) * m); 
     return (c_1, c_2)
 
 def decrypt(c_1, c_2, SK_reciever):
-    compositeKey = pow(c_1, SK_reciever) % p
+    compositeKey = generate(c_1, SK_reciever)
     return int(c_2 / compositeKey)
+
+def generate(base, powerTo):
+    return pow(base, powerTo) % p
 
 def bruteforceSecretKey(PK):
     # To provent never ending loop, if more than 10000 I decide that it is infeasible
