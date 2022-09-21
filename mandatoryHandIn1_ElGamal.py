@@ -10,7 +10,7 @@ PK_alice = -1        #alice public key, initialized to -1
 def aliceEncryptsMessage(superSecretMessage):
     global PK_alice 
     
-    SK_alice = random.randint(1, 9999) #random integer between 1 and 999 - 999 is just arbritary
+    SK_alice = random.randint(1, 99999) #random integer between 1 and 99999 - 99999 is just arbritary
     PK_alice = generate(g, SK_alice)
     encryptedMessage = encrypt(superSecretMessage, PK_bob)
 
