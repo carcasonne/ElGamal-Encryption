@@ -25,14 +25,13 @@ def eveReconstructsMessage(c_1, c_2):
     return (aliceDecryptedMessage, SK_bob)
 
 # Assignment problem 3
-def malloryModifiesMessage():
+def malloryModifiesMessageTo(fakeMessage):
     # cant brute force, so we modify Alice's message
     # Change her public key and message, so Bob decrypts shit
     global PK_alice 
-    fakeMessage = 6000
 
     SK_mallory = random.randint(1, 9999)
-    PK_mallory = pow(g, SK_mallory) % p
+    PK_mallory = generate(g, SK_mallory)
 
     # change Alice's public key, which Bob will use to decrypt the message
     PK_alice = PK_mallory
@@ -58,7 +57,7 @@ def generate(base, powerTo):
 def bruteforceSecretKey(PK):
     # To provent never ending loop, if more than 10000 I decide that it is infeasible
     for x in range(10000):
-        possiblePK = pow(g, x) % p
+        possiblePK = generate(g, x)
         if possiblePK == PK:
              return x
 
@@ -80,7 +79,9 @@ def main():
            str(aliceDecryptedMessage) + ". Bob's secret key is " + str(SK_bob))
 
     #Problem 3
-    (fake_c1, fake_c2) = malloryModifiesMessage() # implicitly changes Alice's public key
+    malloryMessage = 6000;
+
+    (fake_c1, fake_c2) = malloryModifiesMessageTo(malloryMessage) # implicitly changes Alice's public key
     alice_c1 = fake_c1;  # changes Alice's decrypted message
     alice_c2 = fake_c2;  # changes Alice's decrypted message
     
