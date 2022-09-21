@@ -3,7 +3,7 @@ import random
 # Public Information - any adversy has full access to this
 p = 6661             #prime
 g = 666              #base
-PK_bob = 2227        # bob public key
+PK_bob = 2227        #bob public key
 PK_alice = -1        #alice public key, initialized to -1
 
 # Assignment problem 1
@@ -12,7 +12,7 @@ def aliceEncryptsMessage(superSecretMessage):
     
     SK_alice = random.randint(1, 9999) #random integer between 1 and 999 - 999 is just arbritary
     PK_alice = pow(g, SK_alice) % p
-    encryptedMessage = encrypt(superSecretMessage, PK_bob, SK_alice)
+    encryptedMessage = encrypt(superSecretMessage, PK_bob)
 
     return encryptedMessage
 
@@ -20,7 +20,7 @@ def aliceEncryptsMessage(superSecretMessage):
 def eveReconstructsMessage(c_1, c_2):
     # brute forces Bob's secret key
     SK_bob = bruteforceSecretKey(PK_bob)
-    aliceDecryptedMessage = decrypt(c_1, c_2, PK_alice, SK_bob)
+    aliceDecryptedMessage = decrypt(c_1, c_2, SK_bob)
 
     return (aliceDecryptedMessage, SK_bob)
 
@@ -37,32 +37,20 @@ def malloryModifiesMessage():
     # change Alice's public key, which Bob will use to decrypt the message
     PK_alice = PK_mallory
 
-    (fake_c1, fake_c2) = encrypt(fakeMessage, PK_bob, SK_mallory)
+    (fake_c1, fake_c2) = encrypt(fakeMessage, PK_bob)
 
     return (fake_c1, fake_c2)
 
-def encrypt(m, PK_reciever, SK_sender):
-    r = random.randint(1, 99)
-    print("picked random number: " + str(r))
+def encrypt(m, PK_reciever):
+    r = random.randint(1, 9999) # if r gets bigger it starts taking a lot of time to run this
 
     c_1 = pow(g, r);
-    c_2 = (pow(PK_reciever, SK_sender) % p) * m
+    c_2 = ((pow(PK_reciever, r) % p) * m);
     return (c_1, c_2)
 
-def decrypt(c_1, c_2, PK_sender, SK_reciever):
-    r = bruteforceRandomNumber(c_1)
-    print("brute forced random number: " + str(r))
-
-    compositeKey = pow(PK_sender, SK_reciever) % p
+def decrypt(c_1, c_2, SK_reciever):
+    compositeKey = pow(c_1, SK_reciever) % p
     return int(c_2 / compositeKey)
-
-def bruteforceRandomNumber(c_1):
-    counter = 0;
-    while c_1 >= g:
-        counter = counter + 1
-        c_1 = c_1 / g
-            
-    return counter;
 
 def bruteforceSecretKey(PK):
     # To provent never ending loop, if more than 10000 I decide that it is infeasible
@@ -80,8 +68,8 @@ def main():
     (alice_c1, alice_c2) = aliceEncryptsMessage(aliceMessage)
     print("Alice wants to send message: " + str(aliceMessage)) 
     print("Alice has encrypted her message into:");
-    print("--- C_1:" + str(alice_c1))
-    print("--- C_2:" + str(alice_c2))
+    #print("--- C_1:" + str(alice_c1)) #this can get very large, so annoying to print
+    print("- C_2:" + str(alice_c2))
 
     # Problem 2
     (aliceDecryptedMessage, SK_bob) = eveReconstructsMessage(alice_c1, alice_c2)
@@ -93,7 +81,7 @@ def main():
     alice_c1 = fake_c1;  # changes Alice's decrypted message
     alice_c2 = fake_c2;  # changes Alice's decrypted message
     
-    bobDecryptedMessage = decrypt(alice_c1, alice_c2, PK_alice, SK_bob)
+    bobDecryptedMessage = decrypt(alice_c1, alice_c2, SK_bob)
     print("Bob recieves his message from Alice: " + str(bobDecryptedMessage))
 
 if __name__ == "__main__":
