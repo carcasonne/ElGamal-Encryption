@@ -26,18 +26,7 @@ def eveReconstructsMessage(c_1, c_2):
 
 # Assignment problem 3
 def malloryModifiesMessageTo(fakeMessage):
-    # cant brute force, so we modify Alice's message
-    # Change her public key and message, so Bob decrypts shit
-    global PK_alice 
-
-    SK_mallory = random.randint(1, 9999)
-    PK_mallory = generate(g, SK_mallory)
-
-    # change Alice's public key, which Bob will use to decrypt the message
-    PK_alice = PK_mallory
-
     (fake_c1, fake_c2) = encrypt(fakeMessage, PK_bob)
-
     return (fake_c1, fake_c2)
 
 def encrypt(m, PK_reciever):
@@ -81,9 +70,12 @@ def main():
     #Problem 3
     malloryMessage = 6000;
 
-    (fake_c1, fake_c2) = malloryModifiesMessageTo(malloryMessage) # implicitly changes Alice's public key
+    (fake_c1, fake_c2) = malloryModifiesMessageTo(malloryMessage)
     alice_c1 = fake_c1;  # changes Alice's decrypted message
     alice_c2 = fake_c2;  # changes Alice's decrypted message
+
+    print("Mallory modifies the message to:" + str(malloryMessage))
+    print("Which is decrypted using Bob's public key to: " + str(alice_c2))
     
     bobDecryptedMessage = decrypt(alice_c1, alice_c2, SK_bob)
     print("Bob recieves his message from Alice: " + str(bobDecryptedMessage))
