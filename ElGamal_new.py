@@ -75,7 +75,7 @@ def main():
     alice_c2 = fake_c2;  # changes Alice's decrypted message
 
     print("Mallory modifies the message to:" + str(malloryMessage))
-    print("Which is decrypted using Bob's public key to: " + str(alice_c2))
+    print("Which is encrypted using Bob's public key to: " + str(alice_c2))
     
     bobDecryptedMessage = decrypt(alice_c1, alice_c2, SK_bob)
     print("Bob recieves his message from Alice: " + str(bobDecryptedMessage))
